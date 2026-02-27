@@ -9,6 +9,6 @@ const postController = require("../controllers/posts.controller.js");
 router.get("/", postController.getAllPosts);
 
 // 5. Add the new route with the :postId parameter
-router.get("/:postId", postController.getPostById);
+router.get('/:id', postController.getPostById);
 
 module.exports = router;

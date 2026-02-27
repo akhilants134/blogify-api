@@ -13,13 +13,13 @@ const getAllPosts = (req, res) => {
 };
 
 // 1. Create the new async function
-const getPostById = async (req, res) => {
-  // 2. Retrieve the post ID from req.params.postId
-  const postId = req.params.postId;
-
-  // 3. Send the JSON response
+const getPostById = (req, res, next) => {
+  const { id } = req.params;
   res.status(200).json({
-    message: "Fetching data for post with ID: " + postId
+    success: true,
+    data: {
+      message: `Details for post ${id}`
+    }
   });
 };
 
