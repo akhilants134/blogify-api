@@ -1,10 +1,8 @@
-app.use(cors());
-app.use(express.json());
-// src/index.js
-
 const express = require("express");
 const app = express();
 const PORT = 3000;
+
+app.use(express.json());
 
 // 1. Import our new post router
 const postRouter = require("./routes/posts.routes.js");
