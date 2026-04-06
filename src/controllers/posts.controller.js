@@ -8,7 +8,9 @@ const getAllPosts = (req, res) => {
 
   res.status(200).json({
     success: true,
-    data: posts,
+    data: {
+      posts,
+    },
   });
 };
 
@@ -17,7 +19,9 @@ const getPostById = (req, res, next) => {
   const { id } = req.params;
   res.status(200).json({
     success: true,
-    data: { id },
+    data: {
+      postId: id,
+    },
   });
 };
 
