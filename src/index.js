@@ -1,32 +1,22 @@
 const express = require("express");
-const cookieParser = require("cookie-parser");
-const dotenv = require("dotenv");
-
-const connectDB = require("./config/db.js");
-
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 app.use(express.json());
-app.use(cookieParser());
 
+// 1. Import our new post router
+const postRouter = require("./routes/posts.routes.js");
+
+// 2. Mount the router (ADD THIS LINE)
+// This tells Express to send any request starting with /api/v1/posts
+// to the postRouter.
 const mainRouter = require("./routes");
-
 app.use("/api/v1", mainRouter);
 
 app.get("/welcome", (req, res) => {
   res.send("Welcome to the Blogify API!");
 });
 
-connectDB()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server is running at http://localhost:${PORT}/`);
-    });
-  })
-  .catch((error) => {
-    console.error("Failed to start the server:", error.message);
-    process.exit(1);
-  });
+app.listen(PORT, () => {
+  console.log(`Server is running at http://localhost:${PORT}/`);
+});
