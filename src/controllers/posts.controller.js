@@ -7,8 +7,10 @@ const getAllPosts = (req, res) => {
   ];
 
   res.status(200).json({
-    message: "Route handled by postController.getAllPosts",
-    data: posts,
+    success: true,
+    data: {
+      posts,
+    },
   });
 };
 
@@ -18,8 +20,8 @@ const getPostById = (req, res, next) => {
   res.status(200).json({
     success: true,
     data: {
-      message: `Details for post ${id}`
-    }
+      postId: id,
+    },
   });
 };
 
