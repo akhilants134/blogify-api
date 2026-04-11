@@ -39,7 +39,7 @@ const getPostById = async (req, res) => {
 };
 
 const createPost = async (req, res) => {
-  const { title, content } = req.body;
+  const { title, content } = req.body || {};
 
   if (!title || !content) {
     return res.status(400).json({

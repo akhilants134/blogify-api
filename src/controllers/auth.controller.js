@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
+const Post = require("../models/Post.js");
 const User = require("../models/User.js");
 
 const tokenOptions = {
@@ -24,7 +25,7 @@ const createToken = (user) =>
   );
 
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password } = req.body || {};
   const normalizedEmail = email?.trim().toLowerCase();
 
   if (!name || !email || !password) {
@@ -63,7 +64,7 @@ const registerUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password } = req.body || {};
   const normalizedEmail = email?.trim().toLowerCase();
 
   if (!email || !password) {
@@ -121,8 +122,54 @@ const logoutUser = async (req, res) => {
   });
 };
 
+const getAllUsers = async (req, res) => {
+  const users = await User.find().select("name email createdAt updatedAt");
+
+  res.status(200).json({
+    success: true,
+    data: users,
+  });
+};
+
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  if (id !== req.user.id) {
+    return res.status(403).json({
+      success: false,
+      message: "You are not authorized to delete this user",
+    });
+  }
+
+  const user = await User.findById(id);
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  await Post.deleteMany({ author: id });
+  await User.deleteOne({ _id: id });
+
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "User deleted successfully",
+  });
+};
+
 module.exports = {
   registerUser,
   loginUser,
   logoutUser,
+  getAllUsers,
+  deleteUser,
 };
