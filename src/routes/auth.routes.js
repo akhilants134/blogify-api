@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.post("/register", authController.registerUser);
 router.post("/login", authController.loginUser);
+router.get("/practice-token", authController.practiceTokenGeneration);
 router.post("/logout", authController.logoutUser);
 router.get("/", protect, authController.getAllUsers);
 router.delete("/:id", protect, authController.deleteUser);

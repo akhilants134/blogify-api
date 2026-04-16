@@ -108,6 +108,29 @@ const loginUser = async (req, res) => {
   });
 };
 
+const practiceTokenGeneration = (req, res) => {
+  const mockUser = {
+    _id: "654a5b8f1c3d4e5f6a7b8c9d",
+    username: "testuser",
+    role: "user",
+  };
+
+  const payload = {
+    id: mockUser._id,
+    username: mockUser.username,
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Token generated for practice",
+    token,
+  });
+};
+
 const logoutUser = async (req, res) => {
   res.clearCookie("token", {
     httpOnly: true,
@@ -169,6 +192,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  practiceTokenGeneration,
   logoutUser,
   getAllUsers,
   deleteUser,
