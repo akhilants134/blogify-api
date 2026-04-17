@@ -15,6 +15,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/akhilants134/blogify-api/issues"
