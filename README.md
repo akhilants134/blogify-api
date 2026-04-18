@@ -29,3 +29,5 @@ This project will be a backend API for a blogging application.
 ## Postman
 
 Import `Blogify.postman_collection.json` into Postman to test the happy-path, authentication, and authorization scenarios.
+
+# Deployment configuration PR
