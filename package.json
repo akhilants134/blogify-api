@@ -15,15 +15,23 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "type": "commonjs",
   "bugs": {
     "url": "https://github.com/akhilants134/blogify-api/issues"
   },
   "homepage": "https://github.com/akhilants134/blogify-api#readme",
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.14"
   },
   "dependencies": {
-    "express": "^5.2.1"
+    "bcryptjs": "^3.0.2",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.2.4"
   }
 }

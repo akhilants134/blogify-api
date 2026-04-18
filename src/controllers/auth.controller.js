@@ -1,0 +1,199 @@
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
+const Post = require("../models/Post.js");
+const User = require("../models/User.js");
+
+const tokenOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax",
+  path: "/",
+  maxAge: 60 * 60 * 1000,
+};
+
+const createToken = (user) =>
+  jwt.sign(
+    {
+      id: user._id.toString(),
+      email: user.email,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: "1h",
+    },
+  );
+
+const registerUser = async (req, res) => {
+  const { name, email, password } = req.body || {};
+  const normalizedEmail = email?.trim().toLowerCase();
+
+  if (!name || !email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: "Name, email, and password are required",
+    });
+  }
+
+  const existingUser = await User.findOne({ email: normalizedEmail });
+
+  if (existingUser) {
+    return res.status(409).json({
+      success: false,
+      message: "A user with this email already exists",
+    });
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  const user = await User.create({
+    name,
+    email: normalizedEmail,
+    password: hashedPassword,
+  });
+
+  res.status(201).json({
+    success: true,
+    data: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    },
+  });
+};
+
+const loginUser = async (req, res) => {
+  const { email, password } = req.body || {};
+  const normalizedEmail = email?.trim().toLowerCase();
+
+  if (!email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: "Email and password are required",
+    });
+  }
+
+  const user = await User.findOne({ email: normalizedEmail }).select(
+    "+password",
+  );
+
+  if (!user) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid credentials",
+    });
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (!isPasswordValid) {
+    return res.status(401).json({
+      success: false,
+      message: "Invalid credentials",
+    });
+  }
+
+  const token = createToken(user);
+
+  res.cookie("token", token, tokenOptions);
+
+  res.status(200).json({
+    success: true,
+    data: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    },
+  });
+};
+
+const practiceTokenGeneration = (req, res) => {
+  const mockUser = {
+    _id: "654a5b8f1c3d4e5f6a7b8c9d",
+    username: "testuser",
+    role: "user",
+  };
+
+  const payload = {
+    id: mockUser._id,
+    username: mockUser.username,
+  };
+
+  const token = jwt.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Token generated for practice",
+    token,
+  });
+};
+
+const logoutUser = async (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "Logged out successfully",
+  });
+};
+
+const getAllUsers = async (req, res) => {
+  const users = await User.find().select("name email createdAt updatedAt");
+
+  res.status(200).json({
+    success: true,
+    data: users,
+  });
+};
+
+const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  if (id !== req.user.id) {
+    return res.status(403).json({
+      success: false,
+      message: "You are not authorized to delete this user",
+    });
+  }
+
+  const user = await User.findById(id);
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: "User not found",
+    });
+  }
+
+  await Post.deleteMany({ author: id });
+  await User.deleteOne({ _id: id });
+
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+  });
+
+  res.status(200).json({
+    success: true,
+    message: "User deleted successfully",
+  });
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  practiceTokenGeneration,
+  logoutUser,
+  getAllUsers,
+  deleteUser,
+};
