@@ -6,7 +6,7 @@
 ![Express](https://img.shields.io/badge/Express-v4-blue)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green)
 
-**Live Demo:** [https://blogify-api.onrender.com](https://blogify-api.onrender.com)
+**Live Demo:** [https://blogify-api-1-0fck.onrender.com](https://blogify-api-1-0fck.onrender.com)
 
 ---
 
