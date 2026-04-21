@@ -217,12 +217,6 @@ Contributions are welcome! Please open issues or submit pull requests for improv
 
 ---
 
-## 📄 License
-
-MIT
-
----
-
 ## 🙋‍♂️ Author
 
 - Akhilan T (akhilan.t.s.134@kalvium.community)
